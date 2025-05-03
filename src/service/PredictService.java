@@ -1,14 +1,21 @@
 package service;
 
+import dao.PredictDao;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
-
+import java.nio.file.Path;
 
 public class PredictService {
-
+    private PredictDao predictDao;
+    public PredictService(){
+        predictDao=new PredictDao();
+    }
     public String getMetricsPlotPath() {
         return Paths.get(System.getProperty("user.dir"),"py","sharedata", "pic", "four_metrics.png").toString();
     }
@@ -94,15 +101,14 @@ public class PredictService {
     }
 
     public String getTrainLabels(){
+
         String labelPath = Paths.get(System.getProperty("user.dir"), "py", "sharedata", "trainset_label.txt").toString();
         try {
             List<String> lines = Files.readAllLines(Paths.get(labelPath));
             String pos_line=lines.get(0).trim();
             String neg_line=lines.get(1).trim();
-
 //            String[] pos_ids = pos_line.split("\\s+");
 //            String[] neg_ids = neg_line.split("\\s+");
-
             return "发病患者：\n" + pos_line + "\n" +
                     "未发病患者：\n" + neg_line + "\n";
 
@@ -110,5 +116,70 @@ public class PredictService {
             e.printStackTrace();
             return "读取文件出错: " + e.getMessage();
         }
+    }
+    public void checkRawData(){
+        Path firstExamPath=Paths.get(System.getProperty("user.dir"), "py", "rawdata", "FirstExam.csv");
+        Path otherExamPath=Paths.get(System.getProperty("user.dir"), "py", "rawdata", "FirstExam.csv");
+        Path patientExamPath=Paths.get(System.getProperty("user.dir"), "py", "rawdata", "FirstExam.csv");
+        if(!Files.exists(firstExamPath)){
+            predictDao.generateFirstExamCSV();
+        }
+        if(!Files.exists(otherExamPath)){
+            predictDao.generateOtherExamCSV();
+        }
+        if(!Files.exists(patientExamPath)){
+            predictDao.generatePatientExamCSV();
+        }
+    }
+
+    public void runDataProcessor(){
+        checkRawData();
+        try {
+            String python = "python";
+            Path scriptPath = Paths.get(System.getProperty("user.dir"), "py", "data_processor.py");
+            ProcessBuilder pb = new ProcessBuilder(python, scriptPath.toString());
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            // 打印输出结果
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream())
+            );
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("Python: " + line);
+            }
+
+            int exitCode = process.waitFor();
+            System.out.println("Python exited with code: " + exitCode);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void runTrainEvalTest(){
+        try {
+            String python = "python";
+            Path scriptPath = Paths.get(System.getProperty("user.dir"), "py", "train_eval_test.py");
+            ProcessBuilder pb = new ProcessBuilder(python, scriptPath.toString());
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            // 打印输出结果
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream())
+            );
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("Python: " + line);
+            }
+
+            int exitCode = process.waitFor();
+            System.out.println("Python exited with code: " + exitCode);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        checkRawData();
     }
 }

@@ -110,6 +110,8 @@ def plot_roc(tpr_list, auc_list, mean_fpr):
     plt.tight_layout()
     outpath=os.path.join(ROOT, 'sharedata','pic', 'roc_curve.png')
     plt.savefig(outpath, dpi=300)
+    plt.show()
+
 
 if __name__=='__main__':
     avg_scores, tpr_list, auc_list, mean_fpr = train_and_eval()

@@ -91,6 +91,7 @@ public class PredictionPanel extends JPanel {
     }
 
     private void doPrediction() {
+        predictService.runTrainEvalTest();
         imagePanel1.setImage(null);
         imagePanel2.setImage(null);
         probabilityTextArea.setText("");
@@ -115,6 +116,7 @@ public class PredictionPanel extends JPanel {
     }
 
     private void computeTrainLabels() {
+        predictService.runDataProcessor();
         String trainLabels = predictService.getTrainLabels();
         trainLabelsTextArea.setText(trainLabels);
     }
