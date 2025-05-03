@@ -47,7 +47,6 @@ def train_and_eval():
             clf_clone.fit(X_train_sel, y_train)
             y_pred = clf_clone.predict(X_test_sel)
             y_proba = clf_clone.predict_proba(X_test_sel)[:, 1]  # for ROC
-            print(y_proba)
             # 评分
             scores_all.append([
                 accuracy_score(y_test, y_pred),
