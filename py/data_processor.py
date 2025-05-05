@@ -113,6 +113,15 @@ def load_testset():
     return np.array(patient_matrix, dtype=float)
 
 if __name__=="__main__":
+    if not os.path.exists(os.path.join(ROOT, 'processdata')):
+        os.makedirs(os.path.join(ROOT, 'processdata'))
+    if not os.path.exists(os.path.join(ROOT, 'sharedata')):
+        os.makedirs(os.path.join(ROOT, 'sharedata'))
+    if not os.path.exists(os.path.join(ROOT, 'sharedata','pic')):
+        os.makedirs(os.path.join(ROOT, 'sharedata','pic'))
+    if not os.path.exists(os.path.join(ROOT, 'rawdata')):
+        os.makedirs(os.path.join(ROOT, 'rawdata'))
+    
     X, y = load_dataset()
     np.save(os.path.join(ROOT, 'processdata', 'X.npy'), X)
     np.save(os.path.join(ROOT, 'processdata', 'y.npy'), y)
