@@ -1,6 +1,7 @@
 package ui.Panel;
 
 import ui.MainFrame;
+import service.LoginService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,9 +12,11 @@ public class LoginPanel extends JPanel {
     private JButton loginButton;
 
     private MainFrame mainFrame;
+    private LoginService loginService;
 
     public LoginPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
+        this.loginService = new LoginService();
         initComponents();
     }
 
@@ -64,15 +67,22 @@ public class LoginPanel extends JPanel {
     }
 
     private void login() {
-        String username = usernameField.getText();
+        String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword());
 
-        // 简单模拟，真实场景应去调用 UserService 去数据库校验
-        if ("doctor".equals(username) && "123456".equals(password)) {
-            JOptionPane.showMessageDialog(this, "登录成功！");
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "用户名和密码不能为空！", "错误", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        boolean success = loginService.login(username, password);
+        if (success) {
+            JOptionPane.showMessageDialog(this, "登录成功！", "提示", JOptionPane.INFORMATION_MESSAGE);
             mainFrame.showMainMenuPanel();
         } else {
-            JOptionPane.showMessageDialog(this, "用户名或密码错误！");
+            JOptionPane.showMessageDialog(this, "用户名或密码错误！", "登录失败", JOptionPane.ERROR_MESSAGE);
+            // 可选：清空密码框
+            passwordField.setText("");
         }
     }
 }

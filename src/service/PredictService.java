@@ -81,7 +81,7 @@ public class PredictService {
             StringBuilder sb = new StringBuilder();
             int cnt=0;
             for (int i = 0; i < ids.length; i++) {
-                if(probas[i]>0.4) {
+                if(probas[i]>=0.5) {
                     sb.append(ids[i]);
                     cnt+=1;
                     if (cnt % 10 == 0) {

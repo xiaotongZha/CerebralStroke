@@ -28,4 +28,8 @@ public class PatientService {
     public List<Patient> searchPatients(Map<String,Object> searchCriteria) {
         return patientDao.search(searchCriteria);
     }
+
+    public Patient getPatientById(String patientId) {
+        return patientDao.findById(patientId);
+    }
 }

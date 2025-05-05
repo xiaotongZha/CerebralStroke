@@ -250,19 +250,282 @@ public class PatientManagementPanel extends JPanel {
         addButton.addActionListener(e -> showAddDialog());
         buttonPanel.add(addButton);
 
+        // 新增修改按钮
+        JButton editButton = new JButton("修改患者");
+        editButton.addActionListener(e -> showEditDialog());
+        buttonPanel.add(editButton);
+
         deleteButton = new JButton("删除患者");
         deleteButton.addActionListener(e -> deletePatient());
         buttonPanel.add(deleteButton);
 
-        saveButton = new JButton("保存修改");
-        saveButton.addActionListener(e -> saveTableChanges());
-        buttonPanel.add(saveButton);
+        // saveButton = new JButton("保存修改");
+        // saveButton.addActionListener(e -> saveTableChanges());
+        // buttonPanel.add(saveButton);
 
         backButton = new JButton("返回菜单");
         backButton.addActionListener(e -> backToMenu());
         buttonPanel.add(backButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
+    }
+    private void showAddDialog() {
+        JDialog addPatientDialog = new JDialog();
+        addPatientDialog.setTitle("新增患者");
+
+        // 创建输入框
+        JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JTextField idField = new JTextField(10);
+        JTextField ageField = new JTextField(10);
+        JComboBox<String> genderComboBox = new JComboBox<>(new String[]{"男", "女"});
+        JTextField mrsField = new JTextField(10);
+        JTextField onsetField = new JTextField(10);
+        JTextField systolicField = new JTextField(10);
+        JTextField diastolicField = new JTextField(10);
+
+        // 病史字段：使用复选框或下拉框
+        JCheckBox hypertensionCheckBox = new JCheckBox("高血压史");
+        JCheckBox strokeCheckBox = new JCheckBox("卒中史");
+        JCheckBox diabetesCheckBox = new JCheckBox("糖尿病史");
+        JCheckBox atrialFibCheckBox = new JCheckBox("房颤史");
+        JCheckBox coronaryCheckBox = new JCheckBox("冠心病史");
+        JCheckBox smokingCheckBox = new JCheckBox("吸烟史");
+        JCheckBox drinkingCheckBox = new JCheckBox("饮酒史");
+
+        //治疗措施
+        JCheckBox hemostaticCheckBox = new JCheckBox("止血治疗");
+        JCheckBox icpReductionCheckBox = new JCheckBox("颅内压降低治疗");
+        JCheckBox antihypertensiveCheckBox = new JCheckBox("降压治疗");
+        JCheckBox sedationCheckBox = new JCheckBox("镇静镇痛");
+        JCheckBox antiemeticCheckBox = new JCheckBox("止吐胃保护");
+        JCheckBox trophicNerveCheckBox = new JCheckBox("神经营养");
+
+
+        panel.add(new JLabel("患者ID:"));
+        panel.add(idField);
+        panel.add(new JLabel("年龄:"));
+        panel.add(ageField);
+        panel.add(new JLabel("性别:"));
+        panel.add(genderComboBox);
+        panel.add(new JLabel("MRS评分:"));
+        panel.add(mrsField);
+        panel.add(new JLabel("发病到影像时间(h):"));
+        panel.add(onsetField);
+        panel.add(new JLabel("收缩压:"));
+        panel.add(systolicField);
+        panel.add(new JLabel("舒张压:"));
+        panel.add(diastolicField);
+
+        panel.add(new JLabel("病史:"));
+        panel.add(new JLabel());  // 占位符
+        panel.add(hypertensionCheckBox);
+        panel.add(strokeCheckBox);
+        panel.add(diabetesCheckBox);
+        panel.add(atrialFibCheckBox);
+        panel.add(coronaryCheckBox);
+        panel.add(smokingCheckBox);
+        panel.add(drinkingCheckBox);
+        panel.add(new JLabel("治疗措施:"));
+        panel.add(new JLabel());  // 占位符
+        panel.add(hemostaticCheckBox);
+        panel.add(icpReductionCheckBox);
+        panel.add(antihypertensiveCheckBox);
+        panel.add(sedationCheckBox);
+        panel.add(antiemeticCheckBox);
+        panel.add(trophicNerveCheckBox);
+
+        // 创建保存按钮
+        JPanel buttonPanel = new JPanel();
+        JButton saveButton = new JButton("保存");
+        saveButton.addActionListener(e -> {
+            try {
+                Patient newPatient = new Patient();
+                newPatient.setId(idField.getText());
+                newPatient.setAge(Integer.parseInt(ageField.getText()));
+                String gender = genderComboBox.getSelectedItem().equals("男") ? "M" : "F";
+                newPatient.setGender(gender);
+                // newPatient.setGender((String) genderComboBox.getSelectedItem());
+                newPatient.setMrsScore(Integer.parseInt(mrsField.getText()));
+                newPatient.setOnsetToImagingHours(Double.parseDouble(onsetField.getText()));
+                newPatient.setSystolicPressure(Integer.parseInt(systolicField.getText()));
+                newPatient.setDiastolicPressure(Integer.parseInt(diastolicField.getText()));
+                newPatient.setHypertensionHistory(hypertensionCheckBox.isSelected() ? 1 : 0);
+                newPatient.setStrokeHistory(strokeCheckBox.isSelected() ? 1 : 0);
+                newPatient.setDiabetesHistory(diabetesCheckBox.isSelected() ? 1 : 0);
+                newPatient.setAfHistory(atrialFibCheckBox.isSelected() ? 1 : 0);
+                newPatient.setChdHistory(coronaryCheckBox.isSelected() ? 1 : 0);
+                newPatient.setSmokingHistory(smokingCheckBox.isSelected() ? 1 : 0);
+                newPatient.setDrinkingHistory(drinkingCheckBox.isSelected() ? 1 : 0);
+
+                newPatient.setHemostaticTherapy(hemostaticCheckBox.isSelected() ? 1 : 0);
+                newPatient.setIcpReductionTherapy(icpReductionCheckBox.isSelected() ? 1 : 0);
+                newPatient.setAntihypertensiveTherapy(antihypertensiveCheckBox.isSelected() ? 1 : 0);
+                newPatient.setSedationAnalgesia(sedationCheckBox.isSelected() ? 1 : 0);
+                newPatient.setAntiemeticGastricProtection(antiemeticCheckBox.isSelected() ? 1 : 0);
+                newPatient.setNeurotrophicTherapy(trophicNerveCheckBox.isSelected() ? 1 : 0);
+
+
+                // 保存患者信息
+                mainFrame.getPatientService().addPatient(newPatient);
+                JOptionPane.showMessageDialog(addPatientDialog, "患者信息添加成功！");
+                addPatientDialog.dispose();
+                searchPatients(); // 重新查询并刷新表格
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(addPatientDialog, "请输入有效的数字！");
+            }
+        });
+
+        buttonPanel.add(saveButton);
+        panel.add(buttonPanel);
+
+        addPatientDialog.add(panel);
+        addPatientDialog.setSize(600, 800);
+        addPatientDialog.setVisible(true);
+    }
+    private void showEditDialog() {
+        int selectedRow = patientTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "请先选择要修改的患者！");
+            return;
+        }
+
+        // 获取当前选中患者ID
+        String patientId = ParseUtils.parseString(tableModel.getValueAt(selectedRow, 0));
+        Patient patient = mainFrame.getPatientService().getPatientById(patientId);
+        if (patient == null) {
+            JOptionPane.showMessageDialog(this, "患者信息不存在！");
+            return;
+        }
+
+        JDialog editDialog = new JDialog();
+        editDialog.setTitle("修改患者信息");
+
+        JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // ID字段设为不可编辑
+        JTextField idField = new JTextField(patient.getId());
+        idField.setEditable(false);
+        JTextField ageField = new JTextField(String.valueOf(patient.getAge()));
+        JComboBox<String> genderComboBox = new JComboBox<>(new String[]{"男", "女"});
+        genderComboBox.setSelectedItem(patient.getGender().equals("M") ? "男" : "女");
+        JTextField mrsField = new JTextField(String.valueOf(patient.getMrsScore()));
+        JTextField onsetField = new JTextField(String.valueOf(patient.getOnsetToImagingHours()));
+        JTextField systolicField = new JTextField(String.valueOf(patient.getSystolicPressure()));
+        JTextField diastolicField = new JTextField(String.valueOf(patient.getDiastolicPressure()));
+
+        // 病史复选框
+        JCheckBox hypertensionCheckBox = new JCheckBox("高血压史");
+        hypertensionCheckBox.setSelected(patient.getHypertensionHistory() == 1);
+        JCheckBox strokeCheckBox = new JCheckBox("卒中史");
+        strokeCheckBox.setSelected(patient.getStrokeHistory() == 1);
+        JCheckBox diabetesCheckBox = new JCheckBox("糖尿病史");
+        diabetesCheckBox.setSelected(patient.getDiabetesHistory() == 1);
+        JCheckBox atrialFibCheckBox = new JCheckBox("房颤史");
+        atrialFibCheckBox.setSelected(patient.getAfHistory() == 1);
+        JCheckBox coronaryCheckBox = new JCheckBox("冠心病史");
+        coronaryCheckBox.setSelected(patient.getChdHistory() == 1);
+        JCheckBox smokingCheckBox = new JCheckBox("吸烟史");
+        smokingCheckBox.setSelected(patient.getSmokingHistory() == 1);
+        JCheckBox drinkingCheckBox = new JCheckBox("饮酒史");
+        drinkingCheckBox.setSelected(patient.getDrinkingHistory() == 1);
+
+        // 治疗措施复选框
+        JCheckBox hemostaticCheckBox = new JCheckBox("止血治疗");
+        hemostaticCheckBox.setSelected(patient.getHemostaticTherapy() == 1);
+        JCheckBox icpReductionCheckBox = new JCheckBox("颅内压降低治疗");
+        icpReductionCheckBox.setSelected(patient.getIcpReductionTherapy() == 1);
+        JCheckBox antihypertensiveCheckBox = new JCheckBox("降压治疗");
+        antihypertensiveCheckBox.setSelected(patient.getAntihypertensiveTherapy() == 1);
+        JCheckBox sedationCheckBox = new JCheckBox("镇静镇痛");
+        sedationCheckBox.setSelected(patient.getSedationAnalgesia() == 1);
+        JCheckBox antiemeticCheckBox = new JCheckBox("止吐胃保护");
+        antiemeticCheckBox.setSelected(patient.getAntiemeticGastricProtection() == 1);
+        JCheckBox trophicNerveCheckBox = new JCheckBox("神经营养");
+        trophicNerveCheckBox.setSelected(patient.getNeurotrophicTherapy() == 1);
+
+        // 添加组件到面板（与新增对话框相同的布局）
+        panel.add(new JLabel("患者ID:"));
+        panel.add(idField);
+        panel.add(new JLabel("年龄:"));
+        panel.add(ageField);
+        panel.add(new JLabel("性别:"));
+        panel.add(genderComboBox);
+        panel.add(new JLabel("MRS评分:"));
+        panel.add(mrsField);
+        panel.add(new JLabel("发病到影像时间(h):"));
+        panel.add(onsetField);
+        panel.add(new JLabel("收缩压:"));
+        panel.add(systolicField);
+        panel.add(new JLabel("舒张压:"));
+        panel.add(diastolicField);
+
+        panel.add(new JLabel("病史:"));
+        panel.add(new JLabel());
+        panel.add(hypertensionCheckBox);
+        panel.add(strokeCheckBox);
+        panel.add(diabetesCheckBox);
+        panel.add(atrialFibCheckBox);
+        panel.add(coronaryCheckBox);
+        panel.add(smokingCheckBox);
+        panel.add(drinkingCheckBox);
+        panel.add(new JLabel("治疗措施:"));
+        panel.add(new JLabel());
+        panel.add(hemostaticCheckBox);
+        panel.add(icpReductionCheckBox);
+        panel.add(antihypertensiveCheckBox);
+        panel.add(sedationCheckBox);
+        panel.add(antiemeticCheckBox);
+        panel.add(trophicNerveCheckBox);
+
+        JPanel buttonPanel = new JPanel();
+        JButton saveButton = new JButton("保存修改");
+        saveButton.addActionListener(e -> {
+            try {
+                // 更新患者对象
+                patient.setAge(Integer.parseInt(ageField.getText()));
+                patient.setGender(genderComboBox.getSelectedItem().equals("男") ? "M" : "F");
+                patient.setMrsScore(Integer.parseInt(mrsField.getText()));
+                patient.setOnsetToImagingHours(Double.parseDouble(onsetField.getText()));
+                patient.setSystolicPressure(Integer.parseInt(systolicField.getText()));
+                patient.setDiastolicPressure(Integer.parseInt(diastolicField.getText()));
+
+                // 更新病史信息
+                patient.setHypertensionHistory(hypertensionCheckBox.isSelected() ? 1 : 0);
+                patient.setStrokeHistory(strokeCheckBox.isSelected() ? 1 : 0);
+                patient.setDiabetesHistory(diabetesCheckBox.isSelected() ? 1 : 0);
+                patient.setAfHistory(atrialFibCheckBox.isSelected() ? 1 : 0);
+                patient.setChdHistory(coronaryCheckBox.isSelected() ? 1 : 0);
+                patient.setSmokingHistory(smokingCheckBox.isSelected() ? 1 : 0);
+                patient.setDrinkingHistory(drinkingCheckBox.isSelected() ? 1 : 0);
+
+                // 更新治疗措施
+                patient.setHemostaticTherapy(hemostaticCheckBox.isSelected() ? 1 : 0);
+                patient.setIcpReductionTherapy(icpReductionCheckBox.isSelected() ? 1 : 0);
+                patient.setAntihypertensiveTherapy(antihypertensiveCheckBox.isSelected() ? 1 : 0);
+                patient.setSedationAnalgesia(sedationCheckBox.isSelected() ? 1 : 0);
+                patient.setAntiemeticGastricProtection(antiemeticCheckBox.isSelected() ? 1 : 0);
+                patient.setNeurotrophicTherapy(trophicNerveCheckBox.isSelected() ? 1 : 0);
+
+                // 保存修改
+                mainFrame.getPatientService().updatePatient(patient);
+                JOptionPane.showMessageDialog(editDialog, "修改成功！");
+                editDialog.dispose();
+                searchPatients(); // 刷新表格
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(editDialog, "请输入有效的数字！");
+            }
+        });
+
+        buttonPanel.add(saveButton);
+        panel.add(buttonPanel);
+
+        editDialog.add(panel);
+        editDialog.setSize(600, 800);
+        editDialog.setModal(true);
+        editDialog.setVisible(true);
     }
 
     private void searchPatients() {
@@ -342,9 +605,6 @@ public class PatientManagementPanel extends JPanel {
         return "男".equals(selected) ? "M" : "F";
     }
 
-    private void showAddDialog(){
-        System.out.println("add patient");
-    }
 
     private void deletePatient() {
         int selectedRow = patientTable.getSelectedRow();
