@@ -1,7 +1,7 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import RFE
-
+from imblearn.over_sampling import SMOTE
 import numpy as np
 import os
 from sklearn.base import clone
@@ -20,6 +20,8 @@ def train_and_test():
     selector.fit(X_train, y_train)
     X_train_sel = selector.transform(X_train)
     X_test_sel = selector.transform(X_test)
+
+    X_train_sel, y_train = SMOTE(random_state=42).fit_resample(X_train_sel, y_train)
 
     clf.fit(X_train_sel, y_train)
     y_proba = clf.predict_proba(X_test_sel)[:, 1].round(3)

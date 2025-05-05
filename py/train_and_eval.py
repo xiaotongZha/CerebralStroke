@@ -4,6 +4,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import KFold
 from sklearn.feature_selection import RFE
 from sklearn.base import clone
+from imblearn.over_sampling import SMOTE
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -43,11 +44,10 @@ def train_and_eval():
             except Exception as e:
                 print(f"RFE 失败，跳过本折: {e}")
                 continue
-
+            X_train_sel, y_train = SMOTE(random_state=42).fit_resample(X_train_sel, y_train)
             clf_clone.fit(X_train_sel, y_train)
             y_pred = clf_clone.predict(X_test_sel)
             y_proba = clf_clone.predict_proba(X_test_sel)[:, 1]  # for ROC
-            print(y_proba)
             # 评分
             scores_all.append([
                 accuracy_score(y_test, y_pred),

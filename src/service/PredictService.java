@@ -119,8 +119,8 @@ public class PredictService {
     }
     public void checkRawData(){
         Path firstExamPath=Paths.get(System.getProperty("user.dir"), "py", "rawdata", "FirstExam.csv");
-        Path otherExamPath=Paths.get(System.getProperty("user.dir"), "py", "rawdata", "FirstExam.csv");
-        Path patientExamPath=Paths.get(System.getProperty("user.dir"), "py", "rawdata", "FirstExam.csv");
+        Path otherExamPath=Paths.get(System.getProperty("user.dir"), "py", "rawdata", "otherExam.csv");
+        Path patientExamPath=Paths.get(System.getProperty("user.dir"), "py", "rawdata", "Patient.csv");
         if(!Files.exists(firstExamPath)){
             predictDao.generateFirstExamCSV();
         }
