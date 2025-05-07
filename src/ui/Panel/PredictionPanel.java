@@ -20,63 +20,95 @@ public class PredictionPanel extends JPanel {
     private PredictService predictService;
 
     public PredictionPanel(MainFrame mainFrame) {
-        this.predictService=new PredictService();
+        this.predictService = new PredictService();
         this.mainFrame = mainFrame;
         initComponents();
     }
 
+    private JButton createSmallButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        button.setBackground(new Color(33, 150, 243));
+        button.setForeground(Color.BLACK);
+        button.setFocusPainted(false);
+        button.setBorderPainted(true);
+        button.setPreferredSize(new Dimension(120, 30));
+        button.setMargin(new Insets(2, 10, 2, 10));
+        
+        // 添加鼠标悬停效果
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(30, 136, 229));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(33, 150, 243));
+            }
+        });
+        
+        return button;
+    }
+
     private void initComponents() {
-        setLayout(new BorderLayout());
+        setBackground(new Color(245, 245, 245));
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // 标题
         JLabel titleLabel = new JLabel("血肿扩张预警界面", JLabel.CENTER);
         titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 22));
+        titleLabel.setForeground(new Color(33, 150, 243));
         add(titleLabel, BorderLayout.NORTH);
 
         // 中部内容面板
-        JPanel centerPanel = new JPanel(new BorderLayout());
+        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
+        centerPanel.setBackground(new Color(245, 245, 245));
 
         // 顶部按钮面板
+        JPanel topButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        topButtonPanel.setBackground(new Color(245, 245, 245));
 
-        JButton computeTrainLabelsButton = new JButton("计算真实标签");
-        computeTrainLabelsButton.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+        JButton computeTrainLabelsButton = createSmallButton("计算真实标签");
         computeTrainLabelsButton.addActionListener(e -> computeTrainLabels());
 
-        JButton predictButton = new JButton("一键预警");
-        predictButton.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+        JButton predictButton = createSmallButton("一键预警");
         predictButton.addActionListener(e -> doPrediction());
 
-        JPanel topButtonPanel = new JPanel();
         topButtonPanel.add(computeTrainLabelsButton);
         topButtonPanel.add(predictButton);
         centerPanel.add(topButtonPanel, BorderLayout.NORTH);
 
         // 图片展示面板
+        JPanel imageContainer = new JPanel(new GridLayout(1, 2, 10, 10));
+        imageContainer.setBackground(new Color(245, 245, 245));
         imagePanel1 = new RatioImagePanel(4.0 / 3);
         imagePanel2 = new RatioImagePanel(4.0 / 3);
-
-        JPanel imageContainer = new JPanel(new GridLayout(1, 2, 10, 10));
         imageContainer.add(imagePanel1);
         imageContainer.add(imagePanel2);
         centerPanel.add(imageContainer, BorderLayout.CENTER);
 
+        // 文本信息面板
+        JPanel textPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+        textPanel.setBackground(new Color(245, 245, 245));
+
         trainLabelsTextArea = new JTextArea(2, 40);
+        trainLabelsTextArea.setFont(new Font("微软雅黑", Font.PLAIN, 14));
         trainLabelsTextArea.setBorder(BorderFactory.createTitledBorder("训练集真实标签"));
         trainLabelsTextArea.setLineWrap(true);
         trainLabelsTextArea.setWrapStyleWord(true);
 
-        // 文本信息面板
         probabilityTextArea = new JTextArea(2, 40);
+        probabilityTextArea.setFont(new Font("微软雅黑", Font.PLAIN, 14));
         probabilityTextArea.setBorder(BorderFactory.createTitledBorder("发病概率报告"));
         probabilityTextArea.setLineWrap(true);
         probabilityTextArea.setWrapStyleWord(true);
 
         warningListTextArea = new JTextArea(2, 40);
+        warningListTextArea.setFont(new Font("微软雅黑", Font.PLAIN, 14));
         warningListTextArea.setBorder(BorderFactory.createTitledBorder("高风险患者名单"));
         warningListTextArea.setLineWrap(true);
         warningListTextArea.setWrapStyleWord(true);
 
-        JPanel textPanel = new JPanel(new GridLayout(3, 1, 10, 10));
         textPanel.add(new JScrollPane(trainLabelsTextArea));
         textPanel.add(new JScrollPane(probabilityTextArea));
         textPanel.add(new JScrollPane(warningListTextArea));
@@ -84,10 +116,13 @@ public class PredictionPanel extends JPanel {
 
         add(centerPanel, BorderLayout.CENTER);
 
-        // 返回按钮
-        JButton backButton = new JButton("返回主菜单");
+        // 底部按钮面板
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.setBackground(new Color(245, 245, 245));
+        JButton backButton = createSmallButton("返回主菜单");
         backButton.addActionListener(e -> mainFrame.showMainMenuPanel());
-        add(backButton, BorderLayout.SOUTH);
+        bottomPanel.add(backButton);
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     private void doPrediction() {
