@@ -10,6 +10,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import utils.ParseUtils;
+
 public class PatientManagementPanel extends JPanel {
 
     private MainFrame mainFrame;
@@ -27,7 +28,6 @@ public class PatientManagementPanel extends JPanel {
     private JTable patientTable;
     private DefaultTableModel tableModel;
     private JButton searchButton, addButton, deleteButton, saveButton, backButton;
-
 
     private Set<String> modifiedPatientIds = new HashSet<>();
 
@@ -67,76 +67,150 @@ public class PatientManagementPanel extends JPanel {
         initSearchPanel();
         initTablePanel();
         initButtonPanel();
+        // 初始化时加载所有患者数据
+        searchPatients();
     }
-
 
     private void initSearchPanel() {
         JPanel searchOuterPanel = new JPanel();
-        searchOuterPanel.setLayout(new BoxLayout(searchOuterPanel,BoxLayout.Y_AXIS));
+        searchOuterPanel.setLayout(new BoxLayout(searchOuterPanel, BoxLayout.Y_AXIS));
         searchOuterPanel.setBorder(new TitledBorder("查询条件"));
 
-        //第一部分
-        JPanel searchInnerPanel1= new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // 第一部分
+        JPanel searchInnerPanel1 = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-        idField = new JTextField(6);
-        searchInnerPanel1.add(new JLabel("患者ID:"));
-        searchInnerPanel1.add(idField);
-        searchInnerPanel1.add(Box.createHorizontalStrut(20));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel1.add(new JLabel("患者ID:"), gbc);
 
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        idField = new JTextField(10);
+        searchInnerPanel1.add(idField, gbc);
+
+        gbc.gridx = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel1.add(new JLabel("性别:"), gbc);
+
+        gbc.gridx = 3;
+        gbc.anchor = GridBagConstraints.WEST;
         genderComboBox = new JComboBox<>(new String[]{"全部", "男", "女"});
-        searchInnerPanel1.add(new JLabel("性别:"));
-        searchInnerPanel1.add(genderComboBox);
-        searchInnerPanel1.add(Box.createHorizontalStrut(20));
+        searchInnerPanel1.add(genderComboBox, gbc);
 
+        gbc.gridx = 4;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel1.add(new JLabel("年龄:"), gbc);
+
+        gbc.gridx = 5;
+        gbc.anchor = GridBagConstraints.WEST;
         minAgeField = new JTextField(3);
+        searchInnerPanel1.add(minAgeField, gbc);
+
+        gbc.gridx = 6;
+        gbc.anchor = GridBagConstraints.CENTER;
+        searchInnerPanel1.add(new JLabel("-"), gbc);
+
+        gbc.gridx = 7;
+        gbc.anchor = GridBagConstraints.WEST;
         maxAgeField = new JTextField(3);
-        searchInnerPanel1.add(new JLabel("年龄:"));
-        searchInnerPanel1.add(minAgeField);
-        searchInnerPanel1.add(new JLabel("-"));
-        searchInnerPanel1.add(maxAgeField);
+        searchInnerPanel1.add(maxAgeField, gbc);
 
-        //第二部分
-        JPanel searchInnerPanel2= new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // 第二部分
+        JPanel searchInnerPanel2 = new JPanel(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
 
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel2.add(new JLabel("MRS评分:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
         minMrsField = new JTextField(3);
+        searchInnerPanel2.add(minMrsField, gbc);
+
+        gbc.gridx = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        searchInnerPanel2.add(new JLabel("-"), gbc);
+
+        gbc.gridx = 3;
+        gbc.anchor = GridBagConstraints.WEST;
         maxMrsField = new JTextField(3);
-        searchInnerPanel2.add(new JLabel("MRS评分:"));
-        searchInnerPanel2.add(minMrsField);
-        searchInnerPanel2.add(new JLabel("-"));
-        searchInnerPanel2.add(maxMrsField);
-        searchInnerPanel2.add(Box.createHorizontalStrut(20));
+        searchInnerPanel2.add(maxMrsField, gbc);
 
+        gbc.gridx = 4;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel2.add(new JLabel("发病到影像(h):"), gbc);
+
+        gbc.gridx = 5;
+        gbc.anchor = GridBagConstraints.WEST;
         minOnsetField = new JTextField(3);
+        searchInnerPanel2.add(minOnsetField, gbc);
+
+        gbc.gridx = 6;
+        gbc.anchor = GridBagConstraints.CENTER;
+        searchInnerPanel2.add(new JLabel("-"), gbc);
+
+        gbc.gridx = 7;
+        gbc.anchor = GridBagConstraints.WEST;
         maxOnsetField = new JTextField(3);
-        searchInnerPanel2.add(new JLabel("发病到影像(h):"));
-        searchInnerPanel2.add(minOnsetField);
-        searchInnerPanel2.add(new JLabel("-"));
-        searchInnerPanel2.add(maxOnsetField);
+        searchInnerPanel2.add(maxOnsetField, gbc);
 
-        //第三部分
-        JPanel searchInnerPanel3= new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // 第三部分
+        JPanel searchInnerPanel3 = new JPanel(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel3.add(new JLabel("收缩压:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
         minSystolicField = new JTextField(3);
+        searchInnerPanel3.add(minSystolicField, gbc);
+
+        gbc.gridx = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        searchInnerPanel3.add(new JLabel("-"), gbc);
+
+        gbc.gridx = 3;
+        gbc.anchor = GridBagConstraints.WEST;
         maxSystolicField = new JTextField(3);
-        searchInnerPanel3.add(new JLabel("收缩压:"));
-        searchInnerPanel3.add(minSystolicField);
-        searchInnerPanel3.add(new JLabel("-"));
-        searchInnerPanel3.add(maxSystolicField);
-        searchInnerPanel3.add(Box.createHorizontalStrut(20));
+        searchInnerPanel3.add(maxSystolicField, gbc);
 
+        gbc.gridx = 4;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel3.add(new JLabel("舒张压:"), gbc);
+
+        gbc.gridx = 5;
+        gbc.anchor = GridBagConstraints.WEST;
         minDiastolicField = new JTextField(3);
-        maxDiastolicField = new JTextField(3);
-        searchInnerPanel3.add(new JLabel("舒张压:"));
-        searchInnerPanel3.add(minDiastolicField);
-        searchInnerPanel3.add(new JLabel("-"));
-        searchInnerPanel3.add(maxDiastolicField);
+        searchInnerPanel3.add(minDiastolicField, gbc);
 
-        //第四五六部分
-        JPanel searchInnerPanel4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel searchInnerPanel5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel searchInnerPanel6 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        gbc.gridx = 6;
+        gbc.anchor = GridBagConstraints.CENTER;
+        searchInnerPanel3.add(new JLabel("-"), gbc);
+
+        gbc.gridx = 7;
+        gbc.anchor = GridBagConstraints.WEST;
+        maxDiastolicField = new JTextField(3);
+        searchInnerPanel3.add(maxDiastolicField, gbc);
+
+        // 第四五六部分
+        JPanel searchInnerPanel4 = new JPanel(new GridBagLayout());
+        JPanel searchInnerPanel5 = new JPanel(new GridBagLayout());
+        JPanel searchInnerPanel6 = new JPanel(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
 
         String[] options = {"不限", "有", "无"};
-// 初始化 ComboBox
+        // 初始化 ComboBox
         hypertensionComboBox = new JComboBox<>(options);
         strokeComboBox = new JComboBox<>(options);
         diabetesComboBox = new JComboBox<>(options);
@@ -151,49 +225,117 @@ public class PatientManagementPanel extends JPanel {
         antiemeticComboBox = new JComboBox<>(options);
         trophicNerveComboBox = new JComboBox<>(options);
 
-        searchInnerPanel4.add(new JLabel("高血压史"));
-        searchInnerPanel4.add(hypertensionComboBox);
-        searchInnerPanel4.add(Box.createHorizontalStrut(20));
-        searchInnerPanel4.add(new JLabel("卒中史"));
-        searchInnerPanel4.add(strokeComboBox);
-        searchInnerPanel4.add(Box.createHorizontalStrut(20));
-        searchInnerPanel4.add(new JLabel("糖尿病史"));
-        searchInnerPanel4.add(diabetesComboBox);
-        searchInnerPanel4.add(Box.createHorizontalStrut(20));
-        searchInnerPanel4.add(new JLabel("房颤史"));
-        searchInnerPanel4.add(atrialFibComboBox);
-        searchInnerPanel4.add(Box.createHorizontalStrut(20));
-        searchInnerPanel4.add(new JLabel("冠心病史"));
-        searchInnerPanel4.add(coronaryComboBox);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel4.add(new JLabel("高血压史"), gbc);
 
-        searchInnerPanel5.add(new JLabel("吸烟史"));
-        searchInnerPanel5.add(smokingComboBox);
-        searchInnerPanel5.add(Box.createHorizontalStrut(20));
-        searchInnerPanel5.add(new JLabel("饮酒史"));
-        searchInnerPanel5.add(drinkingComboBox);
-        searchInnerPanel5.add(Box.createHorizontalStrut(20));
-        searchInnerPanel5.add(new JLabel("止血治疗"));
-        searchInnerPanel5.add(hemostaticComboBox);
-        searchInnerPanel5.add(Box.createHorizontalStrut(20));
-        searchInnerPanel5.add(new JLabel("颅压降低治疗"));
-        searchInnerPanel5.add(icpReductionComboBox);
-        searchInnerPanel5.add(Box.createHorizontalStrut(20));
-        searchInnerPanel5.add(new JLabel("降压治疗"));
-        searchInnerPanel5.add(antihypertensiveComboBox);
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel4.add(hypertensionComboBox, gbc);
 
-        searchInnerPanel6.add(new JLabel("镇静镇痛"));
-        searchInnerPanel6.add(sedationComboBox);
-        searchInnerPanel6.add(Box.createHorizontalStrut(20));
-        searchInnerPanel6.add(new JLabel("止吐胃保护"));
-        searchInnerPanel6.add(antiemeticComboBox);
-        searchInnerPanel6.add(Box.createHorizontalStrut(20));
-        searchInnerPanel6.add(new JLabel("神经营养"));
-        searchInnerPanel6.add(trophicNerveComboBox);
+        gbc.gridx = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel4.add(new JLabel("卒中史"), gbc);
+
+        gbc.gridx = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel4.add(strokeComboBox, gbc);
+
+        gbc.gridx = 4;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel4.add(new JLabel("糖尿病史"), gbc);
+
+        gbc.gridx = 5;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel4.add(diabetesComboBox, gbc);
+
+        gbc.gridx = 6;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel4.add(new JLabel("房颤史"), gbc);
+
+        gbc.gridx = 7;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel4.add(atrialFibComboBox, gbc);
+
+        gbc.gridx = 8;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel4.add(new JLabel("冠心病史"), gbc);
+
+        gbc.gridx = 9;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel4.add(coronaryComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel5.add(new JLabel("吸烟史"), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel5.add(smokingComboBox, gbc);
+
+        gbc.gridx = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel5.add(new JLabel("饮酒史"), gbc);
+
+        gbc.gridx = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel5.add(drinkingComboBox, gbc);
+
+        gbc.gridx = 4;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel5.add(new JLabel("止血治疗"), gbc);
+
+        gbc.gridx = 5;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel5.add(hemostaticComboBox, gbc);
+
+        gbc.gridx = 6;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel5.add(new JLabel("颅压降低治疗"), gbc);
+
+        gbc.gridx = 7;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel5.add(icpReductionComboBox, gbc);
+
+        gbc.gridx = 8;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel5.add(new JLabel("降压治疗"), gbc);
+
+        gbc.gridx = 9;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel5.add(antihypertensiveComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel6.add(new JLabel("镇静镇痛"), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel6.add(sedationComboBox, gbc);
+
+        gbc.gridx = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel6.add(new JLabel("止吐胃保护"), gbc);
+
+        gbc.gridx = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel6.add(antiemeticComboBox, gbc);
+
+        gbc.gridx = 4;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchInnerPanel6.add(new JLabel("神经营养"), gbc);
+
+        gbc.gridx = 5;
+        gbc.anchor = GridBagConstraints.WEST;
+        searchInnerPanel6.add(trophicNerveComboBox, gbc);
 
         // 查询按钮单独放底下
         JPanel searchButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         searchButtonPanel.setOpaque(false);
-        searchButton = new JButton("查询");
+        searchButton = createSmallButton("查询");
         searchButton.addActionListener(e -> searchPatients());
         searchButtonPanel.add(searchButton);
 
@@ -246,37 +388,44 @@ public class PatientManagementPanel extends JPanel {
     private void initButtonPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
-        addButton = new JButton("新增患者");
+        addButton = createSmallButton("新增患者");
         addButton.addActionListener(e -> showAddDialog());
         buttonPanel.add(addButton);
 
-        // 新增修改按钮
-        JButton editButton = new JButton("修改患者");
+        JButton editButton = createSmallButton("修改患者");
         editButton.addActionListener(e -> showEditDialog());
         buttonPanel.add(editButton);
 
-        deleteButton = new JButton("删除患者");
+        deleteButton = createSmallButton("删除患者");
         deleteButton.addActionListener(e -> deletePatient());
         buttonPanel.add(deleteButton);
 
-        // saveButton = new JButton("保存修改");
-        // saveButton.addActionListener(e -> saveTableChanges());
-        // buttonPanel.add(saveButton);
-
-        backButton = new JButton("返回菜单");
+        backButton = createSmallButton("返回菜单");
         backButton.addActionListener(e -> backToMenu());
         buttonPanel.add(backButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
     }
+
     private void showAddDialog() {
         JDialog addPatientDialog = new JDialog();
         addPatientDialog.setTitle("新增患者");
 
-        // 创建输入框
-        JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // 创建主面板，使用GridBagLayout
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        // 创建基本信息面板
+        JPanel basicInfoPanel = new JPanel(new GridBagLayout());
+        basicInfoPanel.setBorder(BorderFactory.createTitledBorder("基本信息"));
+        GridBagConstraints basicGbc = new GridBagConstraints();
+        basicGbc.insets = new Insets(5, 5, 5, 5);
+        basicGbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // 基本信息组件
         JTextField idField = new JTextField(10);
         JTextField ageField = new JTextField(10);
         JComboBox<String> genderComboBox = new JComboBox<>(new String[]{"男", "女"});
@@ -285,7 +434,31 @@ public class PatientManagementPanel extends JPanel {
         JTextField systolicField = new JTextField(10);
         JTextField diastolicField = new JTextField(10);
 
-        // 病史字段：使用复选框或下拉框
+        // 添加基本信息组件
+        int basicRow = 0;
+        addComponent(basicInfoPanel, new JLabel("患者ID:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, idField, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("年龄:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, ageField, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("性别:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, genderComboBox, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("MRS评分:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, mrsField, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("发病到影像时间(h):"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, onsetField, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("收缩压:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, systolicField, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("舒张压:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, diastolicField, basicGbc, 1, basicRow++);
+
+        // 创建病史信息面板
+        JPanel historyPanel = new JPanel(new GridBagLayout());
+        historyPanel.setBorder(BorderFactory.createTitledBorder("病史信息"));
+        GridBagConstraints historyGbc = new GridBagConstraints();
+        historyGbc.insets = new Insets(5, 5, 5, 5);
+        historyGbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // 病史复选框
         JCheckBox hypertensionCheckBox = new JCheckBox("高血压史");
         JCheckBox strokeCheckBox = new JCheckBox("卒中史");
         JCheckBox diabetesCheckBox = new JCheckBox("糖尿病史");
@@ -294,7 +467,27 @@ public class PatientManagementPanel extends JPanel {
         JCheckBox smokingCheckBox = new JCheckBox("吸烟史");
         JCheckBox drinkingCheckBox = new JCheckBox("饮酒史");
 
-        //治疗措施
+        // 添加病史复选框
+        int historyRow = 0;
+        int historyCol = 0;
+        addComponent(historyPanel, hypertensionCheckBox, historyGbc, historyCol++, historyRow);
+        addComponent(historyPanel, strokeCheckBox, historyGbc, historyCol++, historyRow);
+        addComponent(historyPanel, diabetesCheckBox, historyGbc, historyCol++, historyRow);
+        historyCol = 0;
+        historyRow++;
+        addComponent(historyPanel, atrialFibCheckBox, historyGbc, historyCol++, historyRow);
+        addComponent(historyPanel, coronaryCheckBox, historyGbc, historyCol++, historyRow);
+        addComponent(historyPanel, smokingCheckBox, historyGbc, historyCol++, historyRow);
+        addComponent(historyPanel, drinkingCheckBox, historyGbc, historyCol++, historyRow);
+
+        // 创建治疗措施面板
+        JPanel treatmentPanel = new JPanel(new GridBagLayout());
+        treatmentPanel.setBorder(BorderFactory.createTitledBorder("治疗措施"));
+        GridBagConstraints treatmentGbc = new GridBagConstraints();
+        treatmentGbc.insets = new Insets(5, 5, 5, 5);
+        treatmentGbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // 治疗措施复选框
         JCheckBox hemostaticCheckBox = new JCheckBox("止血治疗");
         JCheckBox icpReductionCheckBox = new JCheckBox("颅内压降低治疗");
         JCheckBox antihypertensiveCheckBox = new JCheckBox("降压治疗");
@@ -302,43 +495,21 @@ public class PatientManagementPanel extends JPanel {
         JCheckBox antiemeticCheckBox = new JCheckBox("止吐胃保护");
         JCheckBox trophicNerveCheckBox = new JCheckBox("神经营养");
 
+        // 添加治疗措施复选框
+        int treatmentRow = 0;
+        int treatmentCol = 0;
+        addComponent(treatmentPanel, hemostaticCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
+        addComponent(treatmentPanel, icpReductionCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
+        addComponent(treatmentPanel, antihypertensiveCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
+        treatmentCol = 0;
+        treatmentRow++;
+        addComponent(treatmentPanel, sedationCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
+        addComponent(treatmentPanel, antiemeticCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
+        addComponent(treatmentPanel, trophicNerveCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
 
-        panel.add(new JLabel("患者ID:"));
-        panel.add(idField);
-        panel.add(new JLabel("年龄:"));
-        panel.add(ageField);
-        panel.add(new JLabel("性别:"));
-        panel.add(genderComboBox);
-        panel.add(new JLabel("MRS评分:"));
-        panel.add(mrsField);
-        panel.add(new JLabel("发病到影像时间(h):"));
-        panel.add(onsetField);
-        panel.add(new JLabel("收缩压:"));
-        panel.add(systolicField);
-        panel.add(new JLabel("舒张压:"));
-        panel.add(diastolicField);
-
-        panel.add(new JLabel("病史:"));
-        panel.add(new JLabel());  // 占位符
-        panel.add(hypertensionCheckBox);
-        panel.add(strokeCheckBox);
-        panel.add(diabetesCheckBox);
-        panel.add(atrialFibCheckBox);
-        panel.add(coronaryCheckBox);
-        panel.add(smokingCheckBox);
-        panel.add(drinkingCheckBox);
-        panel.add(new JLabel("治疗措施:"));
-        panel.add(new JLabel());  // 占位符
-        panel.add(hemostaticCheckBox);
-        panel.add(icpReductionCheckBox);
-        panel.add(antihypertensiveCheckBox);
-        panel.add(sedationCheckBox);
-        panel.add(antiemeticCheckBox);
-        panel.add(trophicNerveCheckBox);
-
-        // 创建保存按钮
-        JPanel buttonPanel = new JPanel();
-        JButton saveButton = new JButton("保存");
+        // 创建按钮面板
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton saveButton = createSmallButton("保存");
         saveButton.addActionListener(e -> {
             try {
                 Patient newPatient = new Patient();
@@ -346,7 +517,6 @@ public class PatientManagementPanel extends JPanel {
                 newPatient.setAge(Integer.parseInt(ageField.getText()));
                 String gender = genderComboBox.getSelectedItem().equals("男") ? "M" : "F";
                 newPatient.setGender(gender);
-                // newPatient.setGender((String) genderComboBox.getSelectedItem());
                 newPatient.setMrsScore(Integer.parseInt(mrsField.getText()));
                 newPatient.setOnsetToImagingHours(Double.parseDouble(onsetField.getText()));
                 newPatient.setSystolicPressure(Integer.parseInt(systolicField.getText()));
@@ -366,7 +536,6 @@ public class PatientManagementPanel extends JPanel {
                 newPatient.setAntiemeticGastricProtection(antiemeticCheckBox.isSelected() ? 1 : 0);
                 newPatient.setNeurotrophicTherapy(trophicNerveCheckBox.isSelected() ? 1 : 0);
 
-
                 // 保存患者信息
                 mainFrame.getPatientService().addPatient(newPatient);
                 JOptionPane.showMessageDialog(addPatientDialog, "患者信息添加成功！");
@@ -376,14 +545,36 @@ public class PatientManagementPanel extends JPanel {
                 JOptionPane.showMessageDialog(addPatientDialog, "请输入有效的数字！");
             }
         });
-
         buttonPanel.add(saveButton);
-        panel.add(buttonPanel);
 
-        addPatientDialog.add(panel);
-        addPatientDialog.setSize(600, 800);
+        // 将所有面板添加到主面板
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        mainPanel.add(basicInfoPanel, gbc);
+
+        gbc.gridy = 1;
+        mainPanel.add(historyPanel, gbc);
+
+        gbc.gridy = 2;
+        mainPanel.add(treatmentPanel, gbc);
+
+        gbc.gridy = 3;
+        mainPanel.add(buttonPanel, gbc);
+
+        addPatientDialog.add(mainPanel);
+        addPatientDialog.setSize(500, 600);
+        addPatientDialog.setLocationRelativeTo(null);
         addPatientDialog.setVisible(true);
     }
+
+    // 辅助方法：添加组件到面板
+    private void addComponent(JPanel panel, JComponent component, GridBagConstraints gbc, int gridx, int gridy) {
+        gbc.gridx = gridx;
+        gbc.gridy = gridy;
+        panel.add(component, gbc);
+    }
+
     private void showEditDialog() {
         int selectedRow = patientTable.getSelectedRow();
         if (selectedRow == -1) {
@@ -402,10 +593,21 @@ public class PatientManagementPanel extends JPanel {
         JDialog editDialog = new JDialog();
         editDialog.setTitle("修改患者信息");
 
-        JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // 创建主面板，使用GridBagLayout
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // ID字段设为不可编辑
+        // 创建基本信息面板
+        JPanel basicInfoPanel = new JPanel(new GridBagLayout());
+        basicInfoPanel.setBorder(BorderFactory.createTitledBorder("基本信息"));
+        GridBagConstraints basicGbc = new GridBagConstraints();
+        basicGbc.insets = new Insets(5, 5, 5, 5);
+        basicGbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // 基本信息组件
         JTextField idField = new JTextField(patient.getId());
         idField.setEditable(false);
         JTextField ageField = new JTextField(String.valueOf(patient.getAge()));
@@ -415,6 +617,30 @@ public class PatientManagementPanel extends JPanel {
         JTextField onsetField = new JTextField(String.valueOf(patient.getOnsetToImagingHours()));
         JTextField systolicField = new JTextField(String.valueOf(patient.getSystolicPressure()));
         JTextField diastolicField = new JTextField(String.valueOf(patient.getDiastolicPressure()));
+
+        // 添加基本信息组件
+        int basicRow = 0;
+        addComponent(basicInfoPanel, new JLabel("患者ID:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, idField, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("年龄:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, ageField, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("性别:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, genderComboBox, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("MRS评分:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, mrsField, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("发病到影像时间(h):"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, onsetField, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("收缩压:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, systolicField, basicGbc, 1, basicRow++);
+        addComponent(basicInfoPanel, new JLabel("舒张压:"), basicGbc, 0, basicRow);
+        addComponent(basicInfoPanel, diastolicField, basicGbc, 1, basicRow++);
+
+        // 创建病史信息面板
+        JPanel historyPanel = new JPanel(new GridBagLayout());
+        historyPanel.setBorder(BorderFactory.createTitledBorder("病史信息"));
+        GridBagConstraints historyGbc = new GridBagConstraints();
+        historyGbc.insets = new Insets(5, 5, 5, 5);
+        historyGbc.fill = GridBagConstraints.HORIZONTAL;
 
         // 病史复选框
         JCheckBox hypertensionCheckBox = new JCheckBox("高血压史");
@@ -432,6 +658,26 @@ public class PatientManagementPanel extends JPanel {
         JCheckBox drinkingCheckBox = new JCheckBox("饮酒史");
         drinkingCheckBox.setSelected(patient.getDrinkingHistory() == 1);
 
+        // 添加病史复选框
+        int historyRow = 0;
+        int historyCol = 0;
+        addComponent(historyPanel, hypertensionCheckBox, historyGbc, historyCol++, historyRow);
+        addComponent(historyPanel, strokeCheckBox, historyGbc, historyCol++, historyRow);
+        addComponent(historyPanel, diabetesCheckBox, historyGbc, historyCol++, historyRow);
+        historyCol = 0;
+        historyRow++;
+        addComponent(historyPanel, atrialFibCheckBox, historyGbc, historyCol++, historyRow);
+        addComponent(historyPanel, coronaryCheckBox, historyGbc, historyCol++, historyRow);
+        addComponent(historyPanel, smokingCheckBox, historyGbc, historyCol++, historyRow);
+        addComponent(historyPanel, drinkingCheckBox, historyGbc, historyCol++, historyRow);
+
+        // 创建治疗措施面板
+        JPanel treatmentPanel = new JPanel(new GridBagLayout());
+        treatmentPanel.setBorder(BorderFactory.createTitledBorder("治疗措施"));
+        GridBagConstraints treatmentGbc = new GridBagConstraints();
+        treatmentGbc.insets = new Insets(5, 5, 5, 5);
+        treatmentGbc.fill = GridBagConstraints.HORIZONTAL;
+
         // 治疗措施复选框
         JCheckBox hemostaticCheckBox = new JCheckBox("止血治疗");
         hemostaticCheckBox.setSelected(patient.getHemostaticTherapy() == 1);
@@ -446,42 +692,21 @@ public class PatientManagementPanel extends JPanel {
         JCheckBox trophicNerveCheckBox = new JCheckBox("神经营养");
         trophicNerveCheckBox.setSelected(patient.getNeurotrophicTherapy() == 1);
 
-        // 添加组件到面板（与新增对话框相同的布局）
-        panel.add(new JLabel("患者ID:"));
-        panel.add(idField);
-        panel.add(new JLabel("年龄:"));
-        panel.add(ageField);
-        panel.add(new JLabel("性别:"));
-        panel.add(genderComboBox);
-        panel.add(new JLabel("MRS评分:"));
-        panel.add(mrsField);
-        panel.add(new JLabel("发病到影像时间(h):"));
-        panel.add(onsetField);
-        panel.add(new JLabel("收缩压:"));
-        panel.add(systolicField);
-        panel.add(new JLabel("舒张压:"));
-        panel.add(diastolicField);
+        // 添加治疗措施复选框
+        int treatmentRow = 0;
+        int treatmentCol = 0;
+        addComponent(treatmentPanel, hemostaticCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
+        addComponent(treatmentPanel, icpReductionCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
+        addComponent(treatmentPanel, antihypertensiveCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
+        treatmentCol = 0;
+        treatmentRow++;
+        addComponent(treatmentPanel, sedationCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
+        addComponent(treatmentPanel, antiemeticCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
+        addComponent(treatmentPanel, trophicNerveCheckBox, treatmentGbc, treatmentCol++, treatmentRow);
 
-        panel.add(new JLabel("病史:"));
-        panel.add(new JLabel());
-        panel.add(hypertensionCheckBox);
-        panel.add(strokeCheckBox);
-        panel.add(diabetesCheckBox);
-        panel.add(atrialFibCheckBox);
-        panel.add(coronaryCheckBox);
-        panel.add(smokingCheckBox);
-        panel.add(drinkingCheckBox);
-        panel.add(new JLabel("治疗措施:"));
-        panel.add(new JLabel());
-        panel.add(hemostaticCheckBox);
-        panel.add(icpReductionCheckBox);
-        panel.add(antihypertensiveCheckBox);
-        panel.add(sedationCheckBox);
-        panel.add(antiemeticCheckBox);
-        panel.add(trophicNerveCheckBox);
-
-        JPanel buttonPanel = new JPanel();
-        JButton saveButton = new JButton("保存修改");
+        // 创建按钮面板
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton saveButton = createSmallButton("保存修改");
         saveButton.addActionListener(e -> {
             try {
                 // 更新患者对象
@@ -518,12 +743,26 @@ public class PatientManagementPanel extends JPanel {
                 JOptionPane.showMessageDialog(editDialog, "请输入有效的数字！");
             }
         });
-
         buttonPanel.add(saveButton);
-        panel.add(buttonPanel);
 
-        editDialog.add(panel);
-        editDialog.setSize(600, 800);
+        // 将所有面板添加到主面板
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        mainPanel.add(basicInfoPanel, gbc);
+
+        gbc.gridy = 1;
+        mainPanel.add(historyPanel, gbc);
+
+        gbc.gridy = 2;
+        mainPanel.add(treatmentPanel, gbc);
+
+        gbc.gridy = 3;
+        mainPanel.add(buttonPanel, gbc);
+
+        editDialog.add(mainPanel);
+        editDialog.setSize(500, 600);
+        editDialog.setLocationRelativeTo(null);
         editDialog.setModal(true);
         editDialog.setVisible(true);
     }
@@ -533,19 +772,20 @@ public class PatientManagementPanel extends JPanel {
         Map<String, Object> searchCriteria = new HashMap<>();
 
         // 添加基本信息到字典
-        searchCriteria.put("id",ParseUtils.parseString(idField.getText().trim()));
+        searchCriteria.put("id", ParseUtils.parseString(idField.getText().trim()));
         searchCriteria.put("gender", parseGender(genderComboBox));
         searchCriteria.put("minAge", ParseUtils.parseInteger(minAgeField.getText().trim()));
         searchCriteria.put("maxAge", ParseUtils.parseInteger(maxAgeField.getText().trim()));
         searchCriteria.put("minMrs", ParseUtils.parseInteger(minMrsField.getText().trim()));
         searchCriteria.put("maxMrs", ParseUtils.parseInteger(maxMrsField.getText().trim()));
-        searchCriteria.put("minOnset",ParseUtils.parseDouble(minOnsetField.getText().trim()));
-        searchCriteria.put("maxOnset",ParseUtils.parseDouble(maxOnsetField.getText().trim()));
-        searchCriteria.put("minSystolic",ParseUtils.parseInteger(minSystolicField.getText().trim()));
-        searchCriteria.put("maxSystolic",ParseUtils.parseInteger(maxSystolicField.getText().trim()));
-        searchCriteria.put("minDiastolic",ParseUtils.parseInteger(minDiastolicField.getText().trim()));
-        searchCriteria.put("maxDiastolic",ParseUtils.parseInteger(maxDiastolicField.getText().trim()));
-        // 添加病史条件到字典，假设ComboBox的值为字符串类型
+        searchCriteria.put("minOnset", ParseUtils.parseDouble(minOnsetField.getText().trim()));
+        searchCriteria.put("maxOnset", ParseUtils.parseDouble(maxOnsetField.getText().trim()));
+        searchCriteria.put("minSystolic", ParseUtils.parseInteger(minSystolicField.getText().trim()));
+        searchCriteria.put("maxSystolic", ParseUtils.parseInteger(maxSystolicField.getText().trim()));
+        searchCriteria.put("minDiastolic", ParseUtils.parseInteger(minDiastolicField.getText().trim()));
+        searchCriteria.put("maxDiastolic", ParseUtils.parseInteger(maxDiastolicField.getText().trim()));
+
+        // 添加病史条件到字典
         searchCriteria.put("hypertension", getHistoryCondition(hypertensionComboBox));
         searchCriteria.put("stroke", getHistoryCondition(strokeComboBox));
         searchCriteria.put("diabetes", getHistoryCondition(diabetesComboBox));
@@ -559,7 +799,7 @@ public class PatientManagementPanel extends JPanel {
         searchCriteria.put("sedation", getHistoryCondition(sedationComboBox));
         searchCriteria.put("antiemetic", getHistoryCondition(antiemeticComboBox));
         searchCriteria.put("trophicNerve", getHistoryCondition(trophicNerveComboBox));
-        System.out.println(searchCriteria);
+
         // 调用查询方法
         List<Patient> result = mainFrame.getPatientService().searchPatients(searchCriteria);
 
@@ -591,7 +831,7 @@ public class PatientManagementPanel extends JPanel {
             });
         }
         patientTable.setModel(newModel);
-        tableModel=newModel;
+        tableModel = newModel;
     }
 
     private Integer getHistoryCondition(JComboBox<String> comboBox) {
@@ -599,12 +839,12 @@ public class PatientManagementPanel extends JPanel {
         if ("不限".equals(selected)) return null;
         return "有".equals(selected) ? 1 : 0;
     }
-    private String parseGender(JComboBox<String> comboBox){
+
+    private String parseGender(JComboBox<String> comboBox) {
         String selected = (String) comboBox.getSelectedItem();
-        if("全部".equals(selected)) return null;
+        if ("全部".equals(selected)) return null;
         return "男".equals(selected) ? "M" : "F";
     }
-
 
     private void deletePatient() {
         int selectedRow = patientTable.getSelectedRow();
@@ -623,50 +863,31 @@ public class PatientManagementPanel extends JPanel {
         }
     }
 
-    private void saveTableChanges() {
-        PatientService patientService = mainFrame.getPatientService();
-        for (int row = 0; row < tableModel.getRowCount(); row++) {
-            String id = ParseUtils.parseString(tableModel.getValueAt(row, 0));
-            if (!modifiedPatientIds.contains(id)) {
-                continue; // 跳过没改过的
-            }
-
-            try {
-                Patient patient = new Patient();
-                patient.setId(id);
-                patient.setAge(ParseUtils.parseInteger(tableModel.getValueAt(row, 1)));
-                patient.setGender(ParseUtils.parseString(tableModel.getValueAt(row, 2)));
-                patient.setMrsScore(ParseUtils.parseInteger(tableModel.getValueAt(row, 3)));
-                patient.setHypertensionHistory(ParseUtils.parseInteger(tableModel.getValueAt(row, 4)));
-                patient.setStrokeHistory(ParseUtils.parseInteger(tableModel.getValueAt(row, 5)));
-                patient.setDiabetesHistory(ParseUtils.parseInteger(tableModel.getValueAt(row, 6)));
-                patient.setAfHistory(ParseUtils.parseInteger(tableModel.getValueAt(row, 7)));
-                patient.setChdHistory(ParseUtils.parseInteger(tableModel.getValueAt(row, 8)));
-                patient.setSmokingHistory(ParseUtils.parseInteger(tableModel.getValueAt(row, 9)));
-                patient.setDrinkingHistory(ParseUtils.parseInteger(tableModel.getValueAt(row, 10)));
-                patient.setOnsetToImagingHours(ParseUtils.parseDouble(tableModel.getValueAt(row, 11)));
-                patient.setSystolicPressure(ParseUtils.parseInteger(tableModel.getValueAt(row, 12)));
-                patient.setDiastolicPressure(ParseUtils.parseInteger(tableModel.getValueAt(row, 13)));
-                patient.setHemostaticTherapy(ParseUtils.parseInteger(tableModel.getValueAt(row, 14)));
-                patient.setIcpReductionTherapy(ParseUtils.parseInteger(tableModel.getValueAt(row, 15)));
-                patient.setAntihypertensiveTherapy(ParseUtils.parseInteger(tableModel.getValueAt(row, 16)));
-                patient.setSedationAnalgesia(ParseUtils.parseInteger(tableModel.getValueAt(row, 17)));
-                patient.setAntiemeticGastricProtection(ParseUtils.parseInteger(tableModel.getValueAt(row, 18)));
-                patient.setNeurotrophicTherapy(ParseUtils.parseInteger(tableModel.getValueAt(row, 19)));
-
-                patientService.updatePatient(patient);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "保存失败！请检查数据格式。");
-                return;
-            }
-        }
-
-        modifiedPatientIds.clear(); // 清空修改记录
-        JOptionPane.showMessageDialog(this, "保存成功！");
-    }
-
     private void backToMenu() {
         mainFrame.showMainMenuPanel();
+    }
+
+    private JButton createSmallButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        button.setBackground(new Color(33, 150, 243));
+        button.setForeground(Color.BLACK);
+        button.setFocusPainted(false);
+        button.setBorderPainted(true);
+        button.setPreferredSize(new Dimension(100, 30));
+        button.setMargin(new Insets(2, 10, 2, 10));
+        
+        // 添加鼠标悬停效果
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(30, 136, 229));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(33, 150, 243));
+            }
+        });
+        
+        return button;
     }
 }
